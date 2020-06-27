@@ -13,32 +13,30 @@ public class Main {
     private static Rectangle bounds;
 
     public static void main(String[] args) {
-        final File imageFile = new File("PaintingStepCalculator/src/main/resources/monkey.png");
+        final File imageFile = new File("src/main/resources/monkey.png");
         try {
             elephantImage = ImageIO.read(imageFile);
             bounds = elephantImage.getData().getBounds();
 
-            for (int x = 0; x < bounds.getWidth(); x++) {
-                for (int y = 0; y < bounds.getHeight(); y++) {
-                    printJoinedPixels(new Pixel(x, y, elephantImage), new ArrayList<>());
-                }
-            }
+            printJoinedPixels(new Pixel(0, 0), new ArrayList<>());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private static void printJoinedPixels(Pixel pixel, List<Pixel> path) {
+        pixel.setHex(elephantImage);
         System.out.println(pixel.toString());
-        path.add(pixel);
 
         if (!path.isEmpty() && path.get(0) == pixel) {
             return;
         }
 
+        path.add(pixel);
+
         for (PixelMoveType pixelMoveType : PixelMoveType.values()) {
-            Pixel potentialNextPixel = pixelMoveType.movePixel(elephantImage, pixel);
-            if(isJoinedPixel(pixel, potentialNextPixel)) {
+            Pixel potentialNextPixel = pixelMoveType.movePixel(pixel);
+            if (isJoinedPixel(pixel, potentialNextPixel)) {
                 printJoinedPixels(potentialNextPixel, path);
                 return;
             }
@@ -46,7 +44,7 @@ public class Main {
     }
 
     private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel) {
-        boolean isInBounds = isInBounds(nextPixel.getX(), bounds.getHeight()) && isInBounds(nextPixel.getY(), bounds.getWidth());
+        boolean isInBounds = isInBounds(nextPixel.getX(), bounds.getWidth()) && isInBounds(nextPixel.getY(), bounds.getHeight());
 
         return isInBounds && lastPixel.getHex().equals(nextPixel.getHex());
     }

@@ -3,10 +3,10 @@ package com.greg;
 import java.awt.image.BufferedImage;
 
 public enum PixelMoveType {
-    RIGHT((image, pixel) -> new Pixel(pixel.getX() + 1, pixel.getY(), image)),
-    DOWN((image, pixel) -> new Pixel(pixel.getX(), pixel.getY() - 1, image)),
-    LEFT((image, pixel) -> new Pixel(pixel.getX() - 1, pixel.getY() + 1, image)),
-    UP((image, pixel) -> new Pixel(pixel.getX(), pixel.getY() + 1, image));
+    RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY())),
+    DOWN(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1)),
+    LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY() + 1)),
+    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1));
 
     private final PixelMove move;
 
@@ -14,7 +14,7 @@ public enum PixelMoveType {
         this.move = move;
     }
 
-    public Pixel movePixel(BufferedImage image, Pixel pixel) {
-        return move.movePixel(image, pixel);
+    public Pixel movePixel(Pixel pixel) {
+        return move.movePixel(pixel);
     }
 }

@@ -7,13 +7,10 @@ public class Pixel {
     private final int y;
     private String hex;
 
-    public Pixel(int x, int y, BufferedImage image) {
+    public Pixel(int x, int y) {
         this.x = x;
         this.y = y;
-        this.hex = Integer.toHexString(image.getRGB(x, y));
     }
-
-
 
     public int getX() {
         return x;
@@ -34,5 +31,9 @@ public class Pixel {
                 ", y=" + y +
                 ", hex='" + hex + '\'' +
                 '}';
+    }
+
+    public void setHex(BufferedImage image) {
+        this.hex = Integer.toHexString(image.getRGB(x, y));
     }
 }
