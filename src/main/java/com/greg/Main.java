@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    private static BufferedImage elephantImage;
+    private static BufferedImage image;
     private static Rectangle bounds;
 
     public static void main(String[] args) {
-        final File imageFile = new File("src/main/resources/monkey.png");
+        final File imageFile = new File("src/main/resources/test1.png");
         try {
-            elephantImage = ImageIO.read(imageFile);
-            bounds = elephantImage.getData().getBounds();
+            image = ImageIO.read(imageFile);
+            bounds = image.getData().getBounds();
 
             printJoinedPixels(new Pixel(0, 0), new ArrayList<>());
         } catch (IOException e) {
@@ -25,7 +25,7 @@ public class Main {
     }
 
     private static void printJoinedPixels(Pixel pixel, List<Pixel> path) {
-        pixel.setHex(elephantImage);
+        pixel.setHex(image);
         System.out.println(pixel.toString());
 
         if (!path.isEmpty() && path.get(0) == pixel) {
@@ -46,10 +46,15 @@ public class Main {
     private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel) {
         boolean isInBounds = isInBounds(nextPixel.getX(), bounds.getWidth()) && isInBounds(nextPixel.getY(), bounds.getHeight());
 
-        return isInBounds && lastPixel.getHex().equals(nextPixel.getHex());
+        if (isInBounds) {
+            nextPixel.setHex(image);
+            return lastPixel.getHex().equals(nextPixel.getHex());
+        } else {
+            return false;
+        }
     }
 
     private static boolean isInBounds(int num, double max) {
-        return num > 0 && num < max;
+        return num >= 0 && num < max;
     }
 }
