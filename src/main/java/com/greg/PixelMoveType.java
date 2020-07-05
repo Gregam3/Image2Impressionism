@@ -1,15 +1,14 @@
 package com.greg;
 
-import java.awt.image.BufferedImage;
-
 public enum PixelMoveType {
+    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1)),
+    UP_RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY() + 1)),
     RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY())),
     RIGHT_DOWN(pixel -> new Pixel(pixel.getX() + 1, pixel.getY() - 1)),
     DOWN(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1)),
     DOWN_LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY() - 1)),
     LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY())),
-    LEFT_UP(pixel -> new Pixel(pixel.getX() -1, pixel.getY() + 1)),
-    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1));
+    LEFT_UP(pixel -> new Pixel(pixel.getX() -1, pixel.getY() + 1));
 
     private final PixelMove move;
 
