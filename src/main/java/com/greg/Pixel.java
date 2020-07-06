@@ -34,6 +34,7 @@ public class Pixel {
     }
 
     public void setHex(BufferedImage image) {
+        System.out.println(x + "|" +y);
         this.hex = Integer.toHexString(image.getRGB(x, y));
     }
 
