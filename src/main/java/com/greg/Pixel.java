@@ -26,15 +26,12 @@ public class Pixel {
 
     @Override
     public String toString() {
-        return "PixelCoordinate{" +
-                "x=" + x +
-                ", y=" + y +
-                ", hex='" + hex + '\'' +
-                '}';
+        return "x=" + x +
+                " y=" + y +
+                " hex='" + hex + '\'';
     }
 
     public void setHex(BufferedImage image) {
-        System.out.println(x + "|" +y);
         this.hex = Integer.toHexString(image.getRGB(x, y));
     }
 
