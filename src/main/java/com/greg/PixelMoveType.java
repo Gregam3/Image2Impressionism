@@ -1,14 +1,12 @@
 package com.greg;
 
+import java.util.stream.Stream;
+
 public enum PixelMoveType {
-    LEFT_UP(pixel -> new Pixel(pixel.getX() -1, pixel.getY() + 1), null),
-    LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY()), LEFT_UP),
-    DOWN_LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY() - 1), LEFT),
-    DOWN(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1), DOWN_LEFT),
-    RIGHT_DOWN(pixel -> new Pixel(pixel.getX() + 1, pixel.getY() - 1), DOWN),
-    RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY()), RIGHT_DOWN),
-    UP_RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY() + 1), RIGHT),
-    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1), UP_RIGHT);
+    LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY()), null),
+    DOWN(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1), LEFT),
+    RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY()), DOWN),
+    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1), RIGHT);
 
     private final PixelMove move;
     private final PixelMoveType nextMove;

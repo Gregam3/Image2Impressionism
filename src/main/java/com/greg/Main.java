@@ -35,13 +35,15 @@ public class Main {
                         Pixel pixel = new Pixel(x, y);
                         pixel.setHex(inputImage);
 
+                        System.out.println("Checking if " + pixel.toString() + " is a new colour ");
+
                         boolean colorMatches = previousColour != null && previousColour.equals(pixel.getHex());
 
                         if (!colorMatches) {
                             colourMatchCount++;
-                            System.out.println("Colour matches");
+                            System.out.println("Colour does not match for, x=" + x + ", y=" + y);
 //                            int rgbInt = new Random().nextInt(16777215);
-                            colorBorder(pixel, new ArrayList<>(), "FF0000", PixelMoveType.UP);
+                            colorBorder(pixel, "FF0000");
                         }
 
                         previousColour = pixel.getHex();
@@ -60,50 +62,42 @@ public class Main {
         });
     }
 
-    private static BufferedImage clearImage(BufferedImage input) {
-        BufferedImage resultImage = input;
-
-        for (int x = 1; x < bounds.getWidth(); x++) {
-            for (int y = 1; y < bounds.getHeight() - 1; y++) {
-                resultImage.setRGB(x, y, 8224125);
-            }
-        }
-        return resultImage;
-    }
-
     private static byte[] getBytesFromImage() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(outputImage, "png", baos);
         return baos.toByteArray();
     }
 
-    private static void colorBorder(Pixel pixel, List<Pixel> path, String colorHex, PixelMoveType moveType) {
-        if (pixel.getHex() != null) {
-            pixel.setHex(inputImage);
-        }
+    private static void colorBorder(Pixel pixel, String borderColourHex) {
+        List<Pixel> path = new ArrayList<>();
+        PixelMoveType moveType = PixelMoveType.UP;
 
-        System.out.println(pixel.toString());
-        outputImage.setRGB(pixel.getX(), pixel.getY(), toRgbInt(colorHex));
-
-        if (!path.isEmpty() && path.get(0) == pixel) {
-            return;
-        }
-
-        path.add(pixel);
-
-        Pixel potentialNextPixel;
-
-        for (int i = 0; i < PixelMoveType.values().length; i++) {
-            potentialNextPixel = moveType.movePixel(pixel);
-            moveType = moveType.getNextMoveType();
-
-            if (isJoinedPixel(pixel, potentialNextPixel, path)) {
-                colorBorder(potentialNextPixel, path, colorHex, moveType);
-                return;
+        while (path.isEmpty() || path.get(0) != pixel) {
+            if (pixel.getHex() != null) {
+                pixel.setHex(inputImage);
             }
-        }
 
-        System.out.println(path.size());
+            System.out.println(pixel.toString());
+            outputImage.setRGB(pixel.getX(), pixel.getY(), toRgbInt(borderColourHex));
+
+            path.add(pixel);
+
+            for (int i = 0; i < PixelMoveType.values().length; i++) {
+                Pixel potentialNextPixel = moveType.movePixel(pixel);
+
+                if (isJoinedPixel(pixel, potentialNextPixel, path)) {
+                    pixel = potentialNextPixel;
+                    break;
+                } else {
+                    moveType = moveType.getNextMoveType();
+                }
+            }
+
+//            if (path.get(path.size() - 1).equals(pixel)) {
+//                System.out.println("Finished");
+//                break;
+//            }
+        }
     }
 
     private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, List<Pixel> path) {
