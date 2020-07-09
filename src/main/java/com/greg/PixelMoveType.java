@@ -3,17 +3,28 @@ package com.greg;
 import java.util.stream.Stream;
 
 public enum PixelMoveType {
-    LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY()), null),
-    DOWN(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1), LEFT),
-    RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY()), DOWN),
-    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1), RIGHT);
+    LEFT(pixel -> new Pixel(pixel.getX() - 1, pixel.getY())),
+    DOWN(pixel -> new Pixel(pixel.getX(), pixel.getY() + 1)),
+    RIGHT(pixel -> new Pixel(pixel.getX() + 1, pixel.getY())),
+    UP(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1));
+
+    static {
+        UP.nextMove = RIGHT;
+        UP.firstAttemptMove = LEFT;
+        RIGHT.nextMove = DOWN;
+        RIGHT.firstAttemptMove = UP;
+        DOWN.nextMove = LEFT;
+        DOWN.firstAttemptMove = RIGHT;
+        LEFT.nextMove = UP;
+        LEFT.firstAttemptMove = DOWN;
+    }
 
     private final PixelMove move;
-    private final PixelMoveType nextMove;
+    private PixelMoveType nextMove;
+    private PixelMoveType firstAttemptMove;
 
-    PixelMoveType(PixelMove move, PixelMoveType nextMove) {
+    PixelMoveType(PixelMove move) {
         this.move = move;
-        this.nextMove = nextMove;
     }
 
     public Pixel movePixel(Pixel pixel) {
@@ -27,5 +38,9 @@ public enum PixelMoveType {
         }
 
         return nextMove;
+    }
+
+    public PixelMoveType getFirstAttemptMove() {
+        return firstAttemptMove;
     }
 }

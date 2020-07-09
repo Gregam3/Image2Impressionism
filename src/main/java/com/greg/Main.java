@@ -12,16 +12,18 @@ import java.util.*;
 import java.util.List;
 
 public class Main {
+    public static final String BORDER_COLOUR = "FF0000";
     private static BufferedImage inputImage;
     private static BufferedImage outputImage;
     private static Rectangle bounds;
 
     public static void main(String[] args) {
         final File inputFile = new File("src/main/resources/test2.png");
+        Set<ColourPatch> colourPatches = new HashSet<>();
+        Set<String> colours = new HashSet<>();
 
         Spark.get("/generate", (req, res) -> {
             int colourMatchCount = 0;
-            Set<String> colours = new HashSet<>();
             try {
                 inputImage = ImageIO.read(inputFile);
                 bounds = inputImage.getData().getBounds();
@@ -37,13 +39,11 @@ public class Main {
 
                         System.out.println("Checking if " + pixel.toString() + " is a new colour ");
 
-                        boolean colorMatches = previousColour != null && previousColour.equals(pixel.getHex());
-
-                        if (!colorMatches) {
+                        if (colourPatches.stream().noneMatch(patch -> patch.isInside(pixel))) {
                             colourMatchCount++;
                             System.out.println("Colour does not match for, x=" + x + ", y=" + y);
 //                            int rgbInt = new Random().nextInt(16777215);
-                            colorBorder(pixel, "FF0000");
+                            colourPatches.add(getColourPatch(pixel));
                         }
 
                         previousColour = pixel.getHex();
@@ -68,24 +68,26 @@ public class Main {
         return baos.toByteArray();
     }
 
-    private static void colorBorder(Pixel pixel, String borderColourHex) {
+    private static ColourPatch getColourPatch(Pixel pixel) {
         List<Pixel> path = new ArrayList<>();
-        PixelMoveType moveType = PixelMoveType.UP;
+        PixelMoveType moveType = PixelMoveType.RIGHT;
 
-        while (path.isEmpty() || path.get(0) != pixel) {
+        while (path.isEmpty() || (path.get(0).getX() != pixel.getX() && path.get(0).getY() == pixel.getY())) {
             if (pixel.getHex() != null) {
                 pixel.setHex(inputImage);
             }
 
             System.out.println(pixel.toString());
-            outputImage.setRGB(pixel.getX(), pixel.getY(), toRgbInt(borderColourHex));
+            outputImage.setRGB(pixel.getX(), pixel.getY(), toRgbInt(BORDER_COLOUR));
 
             path.add(pixel);
+
+            moveType = moveType.getFirstAttemptMove();
 
             for (int i = 0; i < PixelMoveType.values().length; i++) {
                 Pixel potentialNextPixel = moveType.movePixel(pixel);
 
-                if (isJoinedPixel(pixel, potentialNextPixel, path)) {
+                if (isJoinedPixel(pixel, potentialNextPixel)) {
                     pixel = potentialNextPixel;
                     break;
                 } else {
@@ -93,17 +95,19 @@ public class Main {
                 }
             }
 
-//            if (path.get(path.size() - 1).equals(pixel)) {
-//                System.out.println("Finished");
-//                break;
-//            }
+            if (path.get(path.size() - 1).equals(pixel)) {
+                System.out.println("Finished");
+                break;
+            }
         }
+
+        return new ColourPatch(path);
     }
 
-    private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, List<Pixel> path) {
+    private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel) {
         boolean isInBounds = isInBounds(nextPixel.getX(), bounds.getWidth()) && isInBounds(nextPixel.getY(), bounds.getHeight());
 
-        if (isInBounds && !path.contains(nextPixel)) {
+        if (isInBounds) {
             nextPixel.setHex(inputImage);
             return lastPixel.getHex().equals(nextPixel.getHex());
         } else {
