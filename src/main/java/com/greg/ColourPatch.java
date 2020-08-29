@@ -41,7 +41,6 @@ public class ColourPatch {
             return false;
         }
 
-        return yCoordBound.isInBounds(pixel.getY()) &&
-                xCoordBound.isInBounds(pixel.getY());
+        return yCoordBound.isInBounds(pixel.getY()) && xCoordBound.isInBounds(pixel.getX());
     }
 }

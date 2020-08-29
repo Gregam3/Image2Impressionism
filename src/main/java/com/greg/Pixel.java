@@ -12,6 +12,16 @@ public class Pixel {
         this.y = y;
     }
 
+    public Pixel(int x, int y, BufferedImage image) {
+        this.x = x;
+        this.y = y;
+        this.calculateHex(image);
+    }
+
+    public static boolean haveSameLocation(Pixel thisPixel, Pixel thatPixel) {
+        return thisPixel.getX() == thatPixel.getX() && thisPixel.getY() == thatPixel.getY();
+    }
+
     public int getX() {
         return x;
     }
@@ -31,7 +41,7 @@ public class Pixel {
                 " hex='" + hex + '\'';
     }
 
-    public void setHex(BufferedImage image) {
+    public void calculateHex(BufferedImage image) {
         this.hex = Integer.toHexString(image.getRGB(x, y));
     }
 
