@@ -8,7 +8,7 @@ import java.util.Map;
 public class ColourPatch {
     private Map<Integer, CoordinateBound> yBounds = new HashMap<>();
     private Map<Integer, CoordinateBound> xBounds = new HashMap<>();
-    private List<Pixel> outline = new ArrayList<>();
+    private final List<Pixel> outline;
     //TODO add hex colour
     //TODO add child colour patches
 
@@ -17,6 +17,7 @@ public class ColourPatch {
             updateBounds(borderPixel.getX(), borderPixel.getY(), yBounds);
             updateBounds(borderPixel.getY(), borderPixel.getX(), xBounds);
         }
+        this.outline = path;
     }
 
     public void updateBounds(int keyCoordinate, int valueCoordinate, Map<Integer, CoordinateBound> bounds) {
@@ -44,5 +45,19 @@ public class ColourPatch {
         }
 
         return yCoordBound.isInBounds(pixel.getY()) && xCoordBound.isInBounds(pixel.getX());
+    }
+
+    public List<Pixel> getOutline() {
+        return outline;
+    }
+
+    public List<Pixel> generatePatchAreaPixels() {
+        List<Pixel> pixels = new ArrayList<>();
+
+        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : xBounds.entrySet()) {
+            CoordinateBound coordBound = boundaryEntry.getValue();
+
+            //todo from min to max
+        }
     }
 }

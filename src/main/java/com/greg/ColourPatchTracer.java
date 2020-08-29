@@ -13,11 +13,11 @@ public class ColourPatchTracer {
      * @param pixel The first pixel
      * @param inputImage The original image
      * @param outputImage The image to add an outline to
-     * @param bounds The boundaries of the original image
      */
-    public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage, Rectangle bounds) {
+    public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage) {
         List<Pixel> path = new ArrayList<>();
         PixelMoveType moveType = PixelMoveType.RIGHT;
+        Rectangle imageBounds = inputImage.getData().getBounds();
 
         while (path.size() <= 1 || !Pixel.haveSameLocation(path.get(0), pixel)) {
             if (pixel.getHex() != null) {
@@ -34,7 +34,7 @@ public class ColourPatchTracer {
             for (int i = 0; i < PixelMoveType.values().length; i++) {
                 Pixel potentialNextPixel = moveType.movePixel(pixel);
 
-                if (isJoinedPixel(pixel, potentialNextPixel, bounds, inputImage)) {
+                if (isJoinedPixel(pixel, potentialNextPixel, imageBounds, inputImage)) {
                     pixel = potentialNextPixel;
                     break;
                 } else {
