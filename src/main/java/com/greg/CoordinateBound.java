@@ -4,9 +4,14 @@ public class CoordinateBound {
     private int max;
     private int min;
 
+    public CoordinateBound(int value) {
+        this.min = value;
+        this.max = value;
+    }
+
     public CoordinateBound(int max, int min) {
-        this.max = max;
         this.min = min;
+        this.max = max;
     }
 
     public int getMax() {

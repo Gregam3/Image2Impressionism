@@ -7,7 +7,7 @@ import java.util.Map;
 public class ColourPatch {
     private Map<Integer, CoordinateBound> yBounds = new HashMap<>();
     private Map<Integer, CoordinateBound> xBounds = new HashMap<>();
-
+    //TODO add hex colour
     //TODO add child colour patches
 
     public ColourPatch(List<Pixel> path) {
@@ -17,11 +17,11 @@ public class ColourPatch {
         }
     }
 
-    private void updateBounds(int keyCoordinate, int valueCoordinate, Map<Integer, CoordinateBound> bounds) {
-        CoordinateBound bound = bounds.get(keyCoordinate);
+    public void updateBounds(int keyCoordinate, int valueCoordinate, Map<Integer, CoordinateBound> bounds) {
+        final CoordinateBound bound = bounds.get(keyCoordinate);
 
         if (bound == null) {
-            yBounds.put(keyCoordinate, new CoordinateBound(valueCoordinate, valueCoordinate));
+            bounds.put(keyCoordinate, new CoordinateBound(valueCoordinate));
         } else {
             if (bound.getMax() < valueCoordinate) {
                 bound.setMax(valueCoordinate);
@@ -34,7 +34,14 @@ public class ColourPatch {
     }
 
     public boolean isInside(Pixel pixel) {
-        return yBounds.get(pixel.getX()).isInBounds(pixel.getY()) &&
-                xBounds.get(pixel.getY()).isInBounds(pixel.getY());
+        CoordinateBound yCoordBound = yBounds.get(pixel.getX());
+        CoordinateBound xCoordBound = xBounds.get(pixel.getY());
+
+        if(xCoordBound == null || yCoordBound == null) {
+            return false;
+        }
+
+        return yCoordBound.isInBounds(pixel.getY()) &&
+                xCoordBound.isInBounds(pixel.getY());
     }
 }

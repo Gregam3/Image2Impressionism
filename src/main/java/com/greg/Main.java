@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+//PORT 4567
 public class Main {
     public static final String BORDER_COLOUR = "FF0000";
     private static BufferedImage inputImage;
@@ -39,7 +40,8 @@ public class Main {
 
                         System.out.println("Checking if " + pixel.toString() + " is a new colour ");
 
-                        if (colourPatches.stream().noneMatch(patch -> patch.isInside(pixel))) {
+                        if (colourPatches.stream().filter(Objects::nonNull)
+                                .noneMatch(patch -> patch.isInside(pixel))) {
                             colourMatchCount++;
                             System.out.println("Colour does not match for, x=" + x + ", y=" + y);
 //                            int rgbInt = new Random().nextInt(16777215);
