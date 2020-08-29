@@ -41,7 +41,7 @@ class ColourPatchTest {
 
     @Test
     public void testColourPatchTracing() {
-        final File inputFile = new File("src/main/resources/test2.png");
+        final File inputFile = new File("src/main/resources/ukraine_flag.png");
 
         BufferedImage inputImage = null;
         try {
@@ -54,7 +54,11 @@ class ColourPatchTest {
                     inputImage.getData().getBounds()
             );
 
-            System.out.println();
+            assert colourPatch.isInside(new Pixel(899, 299));
+            assert colourPatch.isInside(new Pixel(1, 1));
+            assert !colourPatch.isInside(new Pixel(900, 300));
+            assert !colourPatch.isInside(new Pixel(0, 0));
+
         } catch (IOException e) {
             Assertions.fail(e);
         }

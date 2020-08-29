@@ -1,5 +1,6 @@
 package com.greg;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 public class ColourPatch {
     private Map<Integer, CoordinateBound> yBounds = new HashMap<>();
     private Map<Integer, CoordinateBound> xBounds = new HashMap<>();
+    private List<Pixel> outline = new ArrayList<>();
     //TODO add hex colour
     //TODO add child colour patches
 
