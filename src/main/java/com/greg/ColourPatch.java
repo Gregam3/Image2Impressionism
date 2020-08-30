@@ -10,7 +10,7 @@ public class ColourPatch {
     private Map<Integer, CoordinateBound> xBounds = new HashMap<>();
     private final List<Pixel> outline;
     //TODO add hex colour
-    //TODO add child colour patches
+    private List<ColourPatch> childPatches = new ArrayList<>();
 
     public ColourPatch(List<Pixel> path) {
         for (Pixel borderPixel : path) {
@@ -51,13 +51,25 @@ public class ColourPatch {
         return outline;
     }
 
+    public List<ColourPatch> getChildPatches() {
+        return childPatches;
+    }
+
+    public void setChildPatches(List<ColourPatch> childPatches) {
+        this.childPatches = childPatches;
+    }
+
     public List<Pixel> generatePatchAreaPixels() {
-        List<Pixel> pixels = new ArrayList<>();
+        List<Pixel> areaPixels = new ArrayList<>();
 
         for (Map.Entry<Integer, CoordinateBound> boundaryEntry : xBounds.entrySet()) {
             CoordinateBound coordBound = boundaryEntry.getValue();
 
-            //todo from min to max
+            for (int y = coordBound.getMin(); y < coordBound.getMax(); y++) {
+                areaPixels.add(new Pixel(boundaryEntry.getKey(), y));
+            }
         }
+
+        return areaPixels;
     }
 }

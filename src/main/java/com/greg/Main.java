@@ -28,7 +28,7 @@ public class Main {
 
                 ColourPatch colourPatch = ImageUtil.convert(inputImage);
 
-                searchForInnerColourPatches(colourPatch, outputImage, colourPatches, inputImage);
+                colourPatch.setChildPatches(ColourPatchSearcher.search(colourPatch, outputImage.get(), inputImage));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -38,21 +38,6 @@ public class Main {
             System.out.println("Colours:" + colours.size());
             return ImageUtil.getBytesFromImage(outputImage.get());
         });
-    }
-
-    private static List<ColourPatch> searchForInnerColourPatches(ColourPatch colourPatch, BufferedImage outputImage, Set<ColourPatch> colourPatches, BufferedImage inputImage) {
-        //First inner pixel
-        Pixel currentPixel = colourPatch.generatePatchAreaPixels();
-
-        //TODO find effective way to skip pixels to improve performance
-        if (colourPatches.stream()
-                .filter(Objects::nonNull)
-                .filter(patch -> patch.isInside(currentPixel))
-                .noneMatch(patch -> patch.isInside(currentPixel))) {
-            currentPixel.calculateHex(inputImage);
-            System.out.println("Colour does not match for, x=" + currentPixel.getX() + ", y=" + y);
-            colourPatches.add(ColourPatchTracer.trace(currentPixel, inputImage, outputImage));
-        }
     }
 }
 

@@ -4,9 +4,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ColourPatchTracer {
-    public static final String BORDER_COLOUR = "FF0000";
+    private static final String BORDER_COLOUR = "FF0000";
+    private static final int BORDER_COLOUR_RGB = toRgbInt(BORDER_COLOUR);
 
     /**
      * Finds the outline of a colour patch and traces the outline in BORDER_COLOUR
@@ -17,7 +19,6 @@ public class ColourPatchTracer {
     public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage) {
         List<Pixel> path = new ArrayList<>();
         PixelMoveType moveType = PixelMoveType.RIGHT;
-        Rectangle imageBounds = inputImage.getData().getBounds();
 
         while (path.size() <= 1 || !Pixel.haveSameLocation(path.get(0), pixel)) {
             if (pixel.getHex() != null) {
@@ -25,37 +26,51 @@ public class ColourPatchTracer {
             }
 
             System.out.println(pixel.toString());
-            outputImage.setRGB(pixel.getX(), pixel.getY(), toRgbInt(BORDER_COLOUR));
+            outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
 
             path.add(pixel);
 
-            moveType = moveType.getFirstAttemptMove();
+            Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage);
 
-            for (int i = 0; i < PixelMoveType.values().length; i++) {
-                Pixel potentialNextPixel = moveType.movePixel(pixel);
-
-                if (isJoinedPixel(pixel, potentialNextPixel, imageBounds, inputImage)) {
-                    pixel = potentialNextPixel;
-                    break;
-                } else {
-                    moveType = moveType.getNextMoveType();
-                }
+            if (nextPixel.isPresent()) {
+                pixel = nextPixel.get();
             }
 
-            if (path.get(path.size() - 1).equals(pixel)) {
-                System.out.println("Finished");
-                break;
+            if (!nextPixel.isPresent() || pixelListBeginsToRepeat(pixel, path)) {
+                System.out.println("Finished tracing");
+                return new ColourPatch(path);
             }
         }
 
-        return new ColourPatch(path);
+        throw new AssertionError("This state should never occur, tracing did not reach termination criteria");
     }
 
-    private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, Rectangle bounds, BufferedImage inputImage) {
+    private static Optional<Pixel> getNextPixel(PixelMoveType moveType, Pixel previousPixel, BufferedImage image) {
+        moveType = moveType.getFirstAttemptMove();
+
+        for (int moveIndex = 0; moveIndex < PixelMoveType.values().length; moveIndex++) {
+            Pixel potentialNextPixel = moveType.movePixel(previousPixel);
+
+            if (isJoinedPixel(previousPixel, potentialNextPixel, image)) {
+                return Optional.of(potentialNextPixel);
+            } else {
+                moveType = moveType.getNextMoveType();
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static boolean pixelListBeginsToRepeat(Pixel pixel, List<Pixel> path) {
+        return path.get(path.size() - 1).equals(pixel);
+    }
+
+    private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, BufferedImage image) {
+        Rectangle bounds = image.getData().getBounds();
         boolean isInBounds = isInBounds(nextPixel.getX(), bounds.getWidth()) && isInBounds(nextPixel.getY(), bounds.getHeight());
 
         if (isInBounds) {
-            nextPixel.calculateHex(inputImage);
+            nextPixel.calculateHex(image);
             return lastPixel.getHex().equals(nextPixel.getHex());
         } else {
             return false;
