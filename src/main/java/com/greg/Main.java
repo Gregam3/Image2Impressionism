@@ -6,8 +6,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
@@ -15,8 +13,6 @@ public class Main {
         AtomicReference<BufferedImage> outputImage = new AtomicReference<>();
 
         final File inputFile = new File("src/main/resources/semicircle.png");
-        Set<ColourPatch> colourPatches = new HashSet<>();
-        Set<String> colours = new HashSet<>();
 
         //PORT 4567
         Spark.get("/generate", (req, res) -> {
@@ -34,8 +30,6 @@ public class Main {
             }
 
             res.header("Content-Type", "image/png");
-
-            System.out.println("Colours:" + colours.size());
             return ImageUtil.getBytesFromImage(outputImage.get());
         });
     }

@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class ColourPatchSearcher {
-    public static List<ColourPatch> search(ColourPatch colourPatch, BufferedImage outputImage, BufferedImage inputImage) {
-        List<Pixel> areaPixels = colourPatch.generatePatchAreaPixels();
+    public static List<ColourPatch> search(ColourPatch parentPatch, BufferedImage outputImage, BufferedImage inputImage) {
+        List<Pixel> areaPixels = parentPatch.generatePatchAreaPixels(inputImage);
         List<ColourPatch> childPatches = new ArrayList<>();
 
         //For each area pixel
         for (Pixel areaPixel : areaPixels) {
             //Check both that the pixel is not in another patch
-            if (!isInsideAnotherColorPatch(childPatches, areaPixel)) {
+            if (parentPatch.getHexColour().equals(areaPixel.getHexColour()) && !isInsideAnotherColorPatch(childPatches, areaPixel)) {
                 System.out.println("Colour does not match for, x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
                 ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage);
 

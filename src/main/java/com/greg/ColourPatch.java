@@ -1,5 +1,6 @@
 package com.greg;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,7 @@ public class ColourPatch {
     private Map<Integer, CoordinateBound> yBounds = new HashMap<>();
     private Map<Integer, CoordinateBound> xBounds = new HashMap<>();
     private final List<Pixel> outline;
-    //TODO add hex colour
+    private String hexColour;
     private List<ColourPatch> childPatches = new ArrayList<>();
 
     public ColourPatch(List<Pixel> path) {
@@ -18,6 +19,7 @@ public class ColourPatch {
             updateBounds(borderPixel.getY(), borderPixel.getX(), xBounds);
         }
         this.outline = path;
+        this.hexColour = path.get(0).getHexColour();
     }
 
     public void updateBounds(int keyCoordinate, int valueCoordinate, Map<Integer, CoordinateBound> bounds) {
@@ -47,6 +49,22 @@ public class ColourPatch {
         return yCoordBound.isInBounds(pixel.getY()) && xCoordBound.isInBounds(pixel.getX());
     }
 
+    public List<Pixel> generatePatchAreaPixels(BufferedImage image) {
+        List<Pixel> areaPixels = new ArrayList<>();
+
+        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : xBounds.entrySet()) {
+            CoordinateBound coordBound = boundaryEntry.getValue();
+
+            for (int y = coordBound.getMin(); y < coordBound.getMax(); y++) {
+                Pixel pixel = new Pixel(boundaryEntry.getKey(), y);
+                pixel.calculateHex(image);
+                areaPixels.add(pixel);
+            }
+        }
+
+        return areaPixels;
+    }
+
     public List<Pixel> getOutline() {
         return outline;
     }
@@ -59,17 +77,11 @@ public class ColourPatch {
         this.childPatches = childPatches;
     }
 
-    public List<Pixel> generatePatchAreaPixels() {
-        List<Pixel> areaPixels = new ArrayList<>();
+    public String getHexColour() {
+        return hexColour;
+    }
 
-        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : xBounds.entrySet()) {
-            CoordinateBound coordBound = boundaryEntry.getValue();
-
-            for (int y = coordBound.getMin(); y < coordBound.getMax(); y++) {
-                areaPixels.add(new Pixel(boundaryEntry.getKey(), y));
-            }
-        }
-
-        return areaPixels;
+    public void setHexColour(String hexColour) {
+        this.hexColour = hexColour;
     }
 }

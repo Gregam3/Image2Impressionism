@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class Pixel {
     private final int x;
     private final int y;
-    private String hex;
+    private String hexColour;
 
     public Pixel(int x, int y) {
         this.x = x;
@@ -30,19 +30,19 @@ public class Pixel {
         return y;
     }
 
-    public String getHex() {
-        return hex;
+    public String getHexColour() {
+        return hexColour;
     }
 
     @Override
     public String toString() {
         return "x=" + x +
                 " y=" + y +
-                " hex='" + hex + '\'';
+                " hexColour='" + hexColour + '\'';
     }
 
     public void calculateHex(BufferedImage image) {
-        this.hex = Integer.toHexString(image.getRGB(x, y));
+        this.hexColour = Integer.toHexString(image.getRGB(x, y));
     }
 
     @Override

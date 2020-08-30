@@ -21,7 +21,7 @@ public class ColourPatchTracer {
         PixelMoveType moveType = PixelMoveType.RIGHT;
 
         while (path.size() <= 1 || !Pixel.haveSameLocation(path.get(0), pixel)) {
-            if (pixel.getHex() != null) {
+            if (pixel.getHexColour() != null) {
                 pixel.calculateHex(inputImage);
             }
 
@@ -71,7 +71,7 @@ public class ColourPatchTracer {
 
         if (isInBounds) {
             nextPixel.calculateHex(image);
-            return lastPixel.getHex().equals(nextPixel.getHex());
+            return lastPixel.getHexColour().equals(nextPixel.getHexColour());
         } else {
             return false;
         }
