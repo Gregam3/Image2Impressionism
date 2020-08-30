@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class ColourPatchTracer {
-    private static final String BORDER_COLOUR = "FF0000";
-    private static final int BORDER_COLOUR_RGB = toRgbInt(BORDER_COLOUR);
+    private static final String BORDER_COLOUR = "00FF00";
+    static final int BORDER_COLOUR_RGB = new Color(0, 0, 0).getRGB();
 
     /**
      * Finds the outline of a colour patch and traces the outline in BORDER_COLOUR
@@ -38,7 +38,7 @@ public class ColourPatchTracer {
 
             if (!nextPixel.isPresent() || pixelListBeginsToRepeat(pixel, path)) {
                 System.out.println("Finished tracing");
-                return new ColourPatch(path);
+                return new ColourPatch(path, true);
             }
         }
 
@@ -62,7 +62,9 @@ public class ColourPatchTracer {
     }
 
     private static boolean pixelListBeginsToRepeat(Pixel pixel, List<Pixel> path) {
-        return path.get(path.size() - 1).equals(pixel);
+        List<Pixel> previousPixels = path.subList(path.size() - Math.min(path.size(), 10), path.size() - 1);
+
+        return previousPixels.contains(pixel);
     }
 
     private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, BufferedImage image) {

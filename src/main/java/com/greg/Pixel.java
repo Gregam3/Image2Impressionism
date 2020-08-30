@@ -42,6 +42,8 @@ public class Pixel {
     }
 
     public void calculateHex(BufferedImage image) {
+        System.out.println("Calculating hex for x=" + this.x + ", y=" + this.y);
+
         this.hexColour = Integer.toHexString(image.getRGB(x, y));
     }
 

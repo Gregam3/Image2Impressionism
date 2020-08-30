@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImageUtil {
-    private ImageUtil() {}
+    private ImageUtil() {
+    }
 
     public static byte[] getBytesFromImage(BufferedImage outputImage) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -17,17 +18,23 @@ public class ImageUtil {
         return baos.toByteArray();
     }
 
-    public static ColourPatch convert(BufferedImage image) {
-        Rectangle bounds = image.getData().getBounds();
+    public static ColourPatch convert(BufferedImage inputImage, BufferedImage outputImage) {
+        Rectangle bounds = inputImage.getData().getBounds();
 
         List<Pixel> path = new ArrayList<>();
 
-        for (int x = 0; x < bounds.getWidth(); x++) {
-            for (int y = 0; y < bounds.getHeight(); y++) {
-                path.add(new Pixel(x, y));
-            }
+        int x = 0;
+        int y = 0;
+
+        for (; x < bounds.getWidth() - 1; x++) path.add(new Pixel(x, y, inputImage));
+        for (; y < bounds.getHeight() - 1; y++) path.add(new Pixel(x, y, inputImage));
+        for (; x > 0; x--) path.add(new Pixel(x, y, inputImage));
+        for (; y > 0; y--) path.add(new Pixel(x, y, inputImage));
+
+        for (Pixel pixel : path) {
+            outputImage.setRGB(pixel.getX(), pixel.getY(), ColourPatchTracer.BORDER_COLOUR_RGB);
         }
 
-        return new ColourPatch(path);
+        return new ColourPatch(path, false);
     }
 }

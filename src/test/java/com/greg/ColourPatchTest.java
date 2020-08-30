@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ class ColourPatchTest {
         );
 
 
-        ColourPatch colourPatch = new ColourPatch(path);
+        ColourPatch colourPatch = new ColourPatch(path, true);
 
         assert path.stream().allMatch(colourPatch::isInside);
 
@@ -39,28 +40,39 @@ class ColourPatchTest {
         assert outsidePath.stream().noneMatch(colourPatch::isInside);
     }
 
+    BufferedImage UKRAINE_FLAG_IMAGE = getImageFromFile("src/main/resources/ukraine_flag.png");
+
+    private BufferedImage getImageFromFile(String path) {
+        try {
+            return ImageIO.read(new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Test
     public void testColourPatchTracing() {
-        final File inputFile = new File("src/main/resources/ukraine_flag.png");
+        ColourPatch colourPatch = ColourPatchTracer.trace(
+                new Pixel(1, 1, UKRAINE_FLAG_IMAGE),
+                UKRAINE_FLAG_IMAGE,
+                UKRAINE_FLAG_IMAGE
+        );
 
-        BufferedImage inputImage = null;
-        try {
-            inputImage = ImageIO.read(inputFile);
+        assert colourPatch.isInside(new Pixel(899, 299));
+        assert colourPatch.isInside(new Pixel(1, 1));
+        assert !colourPatch.isInside(new Pixel(900, 300));
+        assert !colourPatch.isInside(new Pixel(0, 0));
 
-            ColourPatch colourPatch = ColourPatchTracer.trace(
-                    new Pixel(1, 1, inputImage),
-                    inputImage,
-                    ImageIO.read(inputFile),
-                    inputImage.getData().getBounds()
-            );
+    }
 
-            assert colourPatch.isInside(new Pixel(899, 299));
-            assert colourPatch.isInside(new Pixel(1, 1));
-            assert !colourPatch.isInside(new Pixel(900, 300));
-            assert !colourPatch.isInside(new Pixel(0, 0));
+    @Test
+    public void testGenerateAreaPixels() {
+        ColourPatch colourPatch = ImageUtil.convert(UKRAINE_FLAG_IMAGE, UKRAINE_FLAG_IMAGE);
 
-        } catch (IOException e) {
-            Assertions.fail(e);
-        }
+        List<Pixel> areaPixels = colourPatch.generatePatchAreaPixels(UKRAINE_FLAG_IMAGE);
+
+        Rectangle bounds = UKRAINE_FLAG_IMAGE.getData().getBounds();
+        Assertions.assertEquals(bounds.getWidth() * bounds.getHeight(), areaPixels.size());
     }
 }

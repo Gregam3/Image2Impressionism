@@ -13,7 +13,7 @@ public class ColourPatchSearcher {
         //For each area pixel
         for (Pixel areaPixel : areaPixels) {
             //Check both that the pixel is not in another patch
-            if (parentPatch.getHexColour().equals(areaPixel.getHexColour()) && !isInsideAnotherColorPatch(childPatches, areaPixel)) {
+            if (!areaPixel.getHexColour().equals(parentPatch.getHexColour()) && !pixelIsInsideExistingPatch(childPatches, areaPixel)) {
                 System.out.println("Colour does not match for, x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
                 ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage);
 
@@ -24,9 +24,9 @@ public class ColourPatchSearcher {
         return childPatches;
     }
 
-    public static boolean isInsideAnotherColorPatch(List<ColourPatch> patches, Pixel pixel) {
-        return patches.stream()
+    public static boolean pixelIsInsideExistingPatch(List<ColourPatch> existingPatches, Pixel pixel) {
+        return existingPatches.stream()
                 .filter(Objects::nonNull)
-                .noneMatch(patch -> patch.isInside(pixel));
+                .anyMatch(patch -> patch.isInside(pixel));
     }
 }

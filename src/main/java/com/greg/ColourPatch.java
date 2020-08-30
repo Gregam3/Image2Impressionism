@@ -13,13 +13,16 @@ public class ColourPatch {
     private String hexColour;
     private List<ColourPatch> childPatches = new ArrayList<>();
 
-    public ColourPatch(List<Pixel> path) {
+    public ColourPatch(List<Pixel> path, boolean calculateHex) {
         for (Pixel borderPixel : path) {
             updateBounds(borderPixel.getX(), borderPixel.getY(), yBounds);
             updateBounds(borderPixel.getY(), borderPixel.getX(), xBounds);
         }
         this.outline = path;
-        this.hexColour = path.get(0).getHexColour();
+
+        if (calculateHex) {
+            this.hexColour = path.get(0).getHexColour();
+        }
     }
 
     public void updateBounds(int keyCoordinate, int valueCoordinate, Map<Integer, CoordinateBound> bounds) {
@@ -42,7 +45,7 @@ public class ColourPatch {
         CoordinateBound yCoordBound = yBounds.get(pixel.getX());
         CoordinateBound xCoordBound = xBounds.get(pixel.getY());
 
-        if(xCoordBound == null || yCoordBound == null) {
+        if (xCoordBound == null || yCoordBound == null) {
             return false;
         }
 
@@ -52,11 +55,12 @@ public class ColourPatch {
     public List<Pixel> generatePatchAreaPixels(BufferedImage image) {
         List<Pixel> areaPixels = new ArrayList<>();
 
-        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : xBounds.entrySet()) {
+        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : yBounds.entrySet()) {
             CoordinateBound coordBound = boundaryEntry.getValue();
 
-            for (int y = coordBound.getMin(); y < coordBound.getMax(); y++) {
+            for (int y = coordBound.getMin(); y <= coordBound.getMax(); y++) {
                 Pixel pixel = new Pixel(boundaryEntry.getKey(), y);
+                System.out.println(pixel);
                 pixel.calculateHex(image);
                 areaPixels.add(pixel);
             }
