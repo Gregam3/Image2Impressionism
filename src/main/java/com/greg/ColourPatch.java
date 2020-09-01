@@ -20,7 +20,7 @@ public class ColourPatch {
         }
         this.outline = path;
 
-        if (calculateHex) {
+        if (calculateHex && !path.isEmpty()) {
             this.hexColour = path.get(0).getHexColour();
         }
     }
@@ -42,8 +42,8 @@ public class ColourPatch {
     }
 
     public boolean isInside(Pixel pixel) {
-        CoordinateBound yCoordBound = yBounds.get(pixel.getX());
-        CoordinateBound xCoordBound = xBounds.get(pixel.getY());
+        CoordinateBound yCoordBound = yBounds.get(pixel.getY());
+        CoordinateBound xCoordBound = xBounds.get(pixel.getX());
 
         if (xCoordBound == null || yCoordBound == null) {
             return false;

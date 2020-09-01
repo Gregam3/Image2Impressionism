@@ -10,36 +10,36 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
+    static int pixelsScanned = 0;
+
     public static void main(String[] args) {
-        AtomicReference<byte[]> outputBytes = new AtomicReference<>();
-        final File inputFile = new File("src/main/resources/palau_flag.png");
+        try {
+            AtomicReference<byte[]> outputBytes = new AtomicReference<>();
+            final File inputFile = new File("src/main/resources/palau_flag.png");
+            BufferedImage outputImage = ImageIO.read(inputFile);
 
-        //PORT 4567
-        Spark.get("/generate", (req, res) -> {
-            BufferedImage inputImage;
-
-            try {
-                inputImage = ImageIO.read(inputFile);
-                BufferedImage outputImage = (ImageIO.read(inputFile));
-
-                ColourPatch colourPatch = ImageUtil.convert(inputImage, outputImage);
-
-                List<ColourPatch> childPatches;
-
-                do {
-                    childPatches = ColourPatchSearcher.search(colourPatch, outputImage, inputImage);
-
-                    colourPatch.setChildPatches(childPatches);
-                } while(!childPatches.isEmpty());
-
+            //PORT 4567
+            Spark.get("/generate", (req, res) -> {
                 outputBytes.set(ImageUtil.getBytesFromImage(outputImage));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            res.header("Content-Type", "image/png");
-            return outputBytes.get();
-        });
+                res.header("Content-Type", "image/png");
+                return outputBytes.get();
+            });
+
+            BufferedImage inputImage = ImageIO.read(inputFile);
+
+            ColourPatch colourPatch = ImageUtil.convert(inputImage, outputImage);
+
+            List<ColourPatch> childPatches;
+
+            do {
+                childPatches = ColourPatchSearcher.search(colourPatch, outputImage, inputImage);
+
+                colourPatch.setChildPatches(childPatches);
+            } while (!childPatches.isEmpty());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

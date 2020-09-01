@@ -9,14 +9,14 @@ public enum PixelMoveType {
     UP(pixel -> new Pixel(pixel.getX(), pixel.getY() - 1));
 
     static {
-        UP.nextMove = RIGHT;
         UP.firstAttemptMove = LEFT;
-        RIGHT.nextMove = DOWN;
+        UP.nextMove = RIGHT;
         RIGHT.firstAttemptMove = UP;
-        DOWN.nextMove = LEFT;
+        RIGHT.nextMove = DOWN;
         DOWN.firstAttemptMove = RIGHT;
-        LEFT.nextMove = UP;
+        DOWN.nextMove = LEFT;
         LEFT.firstAttemptMove = DOWN;
+        LEFT.nextMove = UP;
     }
 
     private final PixelMove move;

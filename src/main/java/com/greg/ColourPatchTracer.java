@@ -25,33 +25,31 @@ public class ColourPatchTracer {
                 pixel.calculateHex(inputImage);
             }
 
-            System.out.println(pixel.toString());
-            outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
-
             path.add(pixel);
 
-            Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage);
+            outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
+
+            System.out.println(Main.pixelsScanned++);
+
+            Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage, path);
 
             if (nextPixel.isPresent()) {
                 pixel = nextPixel.get();
-            }
-
-            if (!nextPixel.isPresent() || pixelListBeginsToRepeat(pixel, path)) {
-                System.out.println("Finished tracing");
+            } else {
                 return new ColourPatch(path, true);
             }
         }
 
-        throw new AssertionError("This state should never occur, tracing did not reach termination criteria");
+        return new ColourPatch(path, true);
     }
 
-    private static Optional<Pixel> getNextPixel(PixelMoveType moveType, Pixel previousPixel, BufferedImage image) {
+    private static Optional<Pixel> getNextPixel(PixelMoveType moveType, Pixel previousPixel, BufferedImage image, List<Pixel> path) {
         moveType = moveType.getFirstAttemptMove();
 
         for (int moveIndex = 0; moveIndex < PixelMoveType.values().length; moveIndex++) {
             Pixel potentialNextPixel = moveType.movePixel(previousPixel);
 
-            if (isJoinedPixel(previousPixel, potentialNextPixel, image)) {
+            if (isJoinedPixel(previousPixel, potentialNextPixel, image) && !path.contains(potentialNextPixel)) {
                 return Optional.of(potentialNextPixel);
             } else {
                 moveType = moveType.getNextMoveType();
@@ -85,5 +83,13 @@ public class ColourPatchTracer {
 
     public static int toRgbInt(String hex) {
         return Color.decode("#" + hex).getRGB();
+    }
+
+    public static <T> T getNthLastItemFromList(List<T> list, int n) {
+        int listN = n + 1;
+
+        if(list.size() < listN) return null;
+
+        return list.get(list.size() - listN);
     }
 }

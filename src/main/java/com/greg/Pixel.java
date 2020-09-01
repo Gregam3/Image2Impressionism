@@ -19,6 +19,8 @@ public class Pixel {
     }
 
     public static boolean haveSameLocation(Pixel thisPixel, Pixel thatPixel) {
+        if(thisPixel == null || thatPixel == null) return false;
+
         return thisPixel.getX() == thatPixel.getX() && thisPixel.getY() == thatPixel.getY();
     }
 
