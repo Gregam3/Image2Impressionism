@@ -16,11 +16,12 @@ public class ColourPatchTracer {
      * @param inputImage The original image
      * @param outputImage The image to add an outline to
      */
-    public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage) {
+    public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage, List<ColourPatch> existingPatches) {
         List<Pixel> path = new ArrayList<>();
         PixelMoveType moveType = PixelMoveType.RIGHT;
 
         while (path.size() <= 1 || !Pixel.haveSameLocation(path.get(0), pixel)) {
+
             if (pixel.getHexColour() != null) {
                 pixel.calculateHex(inputImage);
             }
@@ -28,6 +29,9 @@ public class ColourPatchTracer {
             path.add(pixel);
 
             outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
+            if(ColourPatchSearcher.pixelIsInsideExistingPatch(existingPatches, pixel)) {
+                return new ColourPatch(path);
+            }
 
             System.out.println(Main.pixelsScanned++);
 
@@ -36,20 +40,32 @@ public class ColourPatchTracer {
             if (nextPixel.isPresent()) {
                 pixel = nextPixel.get();
             } else {
-                return new ColourPatch(path, true);
+                return new ColourPatch(path);
             }
         }
 
-        return new ColourPatch(path, true);
+        return new ColourPatch(path);
     }
 
     private static Optional<Pixel> getNextPixel(PixelMoveType moveType, Pixel previousPixel, BufferedImage image, List<Pixel> path) {
         moveType = moveType.getFirstAttemptMove();
+//        try {
+//            Thread.sleep(10);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         for (int moveIndex = 0; moveIndex < PixelMoveType.values().length; moveIndex++) {
             Pixel potentialNextPixel = moveType.movePixel(previousPixel);
 
-            if (isJoinedPixel(previousPixel, potentialNextPixel, image) && !path.contains(potentialNextPixel)) {
+
+            if (isJoinedPixel(previousPixel, potentialNextPixel, image) &&
+                    !path.contains(potentialNextPixel) &&
+                    !moveType.isBacktracking(previousPixel.getCameFrom())) {
+                if(moveType == PixelMoveType.UP) {
+                    System.out.println();
+                }
+                potentialNextPixel.setCameFrom(moveType);
                 return Optional.of(potentialNextPixel);
             } else {
                 moveType = moveType.getNextMoveType();
@@ -57,12 +73,6 @@ public class ColourPatchTracer {
         }
 
         return Optional.empty();
-    }
-
-    private static boolean pixelListBeginsToRepeat(Pixel pixel, List<Pixel> path) {
-        List<Pixel> previousPixels = path.subList(path.size() - Math.min(path.size(), 10), path.size() - 1);
-
-        return previousPixels.contains(pixel);
     }
 
     private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, BufferedImage image) {

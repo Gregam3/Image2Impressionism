@@ -6,6 +6,7 @@ public class Pixel {
     private final int x;
     private final int y;
     private String hexColour;
+    private PixelMoveType cameFrom;
 
     public Pixel(int x, int y) {
         this.x = x;
@@ -34,6 +35,14 @@ public class Pixel {
 
     public String getHexColour() {
         return hexColour;
+    }
+
+    public PixelMoveType getCameFrom() {
+        return cameFrom;
+    }
+
+    public void setCameFrom(PixelMoveType moveType) {
+        this.cameFrom = moveType;
     }
 
     @Override

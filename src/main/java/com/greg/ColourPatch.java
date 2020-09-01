@@ -13,14 +13,14 @@ public class ColourPatch {
     private String hexColour;
     private List<ColourPatch> childPatches = new ArrayList<>();
 
-    public ColourPatch(List<Pixel> path, boolean calculateHex) {
+    public ColourPatch(List<Pixel> path) {
         for (Pixel borderPixel : path) {
             updateBounds(borderPixel.getX(), borderPixel.getY(), yBounds);
             updateBounds(borderPixel.getY(), borderPixel.getX(), xBounds);
         }
         this.outline = path;
 
-        if (calculateHex && !path.isEmpty()) {
+        if (!path.isEmpty()) {
             this.hexColour = path.get(0).getHexColour();
         }
     }
@@ -59,9 +59,8 @@ public class ColourPatch {
             CoordinateBound coordBound = boundaryEntry.getValue();
 
             for (int y = coordBound.getMin(); y <= coordBound.getMax(); y++) {
-                Pixel pixel = new Pixel(boundaryEntry.getKey(), y);
+                Pixel pixel = new Pixel(boundaryEntry.getKey(), y, image);
                 System.out.println(pixel);
-                pixel.calculateHex(image);
                 areaPixels.add(pixel);
             }
         }

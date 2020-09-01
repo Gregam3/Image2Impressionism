@@ -4,18 +4,21 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ColourPatchSearcher {
     public static List<ColourPatch> search(ColourPatch parentPatch, BufferedImage outputImage, BufferedImage inputImage) {
-        List<Pixel> areaPixels = parentPatch.generatePatchAreaPixels(inputImage);
+        List<Pixel> innerPatchPixels = parentPatch.generatePatchAreaPixels(inputImage)
+                .stream().filter(areaPixel -> !areaPixel.getHexColour().equals(parentPatch.getHexColour()))
+                .collect(Collectors.toList());
         List<ColourPatch> childPatches = new ArrayList<>();
 
         //For each area pixel
-        for (Pixel areaPixel : areaPixels) {
+        for (Pixel areaPixel : innerPatchPixels) {
             //Check both that the pixel is not in another patch
-            if (!areaPixel.getHexColour().equals(parentPatch.getHexColour()) && !pixelIsInsideExistingPatch(childPatches, areaPixel)) {
+            if (!pixelIsInsideExistingPatch(childPatches, areaPixel)) {
                 System.out.println("Colour does not match for, x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
-                ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage);
+                ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage, childPatches);
 
                 childPatches.add(currentPatch);
             }

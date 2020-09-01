@@ -1,5 +1,6 @@
 package com.greg;
 
+import javax.annotation.CheckForNull;
 import java.util.stream.Stream;
 
 public enum PixelMoveType {
@@ -11,17 +12,22 @@ public enum PixelMoveType {
     static {
         UP.firstAttemptMove = LEFT;
         UP.nextMove = RIGHT;
+        UP.oppositeMove= DOWN;
         RIGHT.firstAttemptMove = UP;
         RIGHT.nextMove = DOWN;
+        RIGHT.nextMove = LEFT;
         DOWN.firstAttemptMove = RIGHT;
         DOWN.nextMove = LEFT;
+        DOWN.nextMove = UP;
         LEFT.firstAttemptMove = DOWN;
         LEFT.nextMove = UP;
+        LEFT.nextMove = RIGHT;
     }
 
     private final PixelMove move;
     private PixelMoveType nextMove;
     private PixelMoveType firstAttemptMove;
+    private PixelMoveType oppositeMove;
 
     PixelMoveType(PixelMove move) {
         this.move = move;
@@ -38,6 +44,12 @@ public enum PixelMoveType {
         }
 
         return nextMove;
+    }
+
+    public boolean isBacktracking(@CheckForNull PixelMoveType moveType) {
+        if(moveType == null) return false;
+
+        return this.oppositeMove == moveType;
     }
 
     public PixelMoveType getFirstAttemptMove() {

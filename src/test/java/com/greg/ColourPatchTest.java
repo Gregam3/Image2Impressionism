@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +25,7 @@ class ColourPatchTest {
         );
 
 
-        ColourPatch colourPatch = new ColourPatch(path, true);
+        ColourPatch colourPatch = new ColourPatch(path);
 
         assert path.stream().allMatch(colourPatch::isInside);
 
@@ -56,7 +57,8 @@ class ColourPatchTest {
         ColourPatch colourPatch = ColourPatchTracer.trace(
                 new Pixel(1, 1, UKRAINE_FLAG_IMAGE),
                 UKRAINE_FLAG_IMAGE,
-                UKRAINE_FLAG_IMAGE
+                UKRAINE_FLAG_IMAGE,
+                new ArrayList<>()
         );
 
         assert colourPatch.isInside(new Pixel(899, 299));

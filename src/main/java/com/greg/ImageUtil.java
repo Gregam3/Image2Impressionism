@@ -35,6 +35,6 @@ public class ImageUtil {
             outputImage.setRGB(pixel.getX(), pixel.getY(), ColourPatchTracer.BORDER_COLOUR_RGB);
         }
 
-        return new ColourPatch(path, false);
+        return new ColourPatch(path);
     }
 }
