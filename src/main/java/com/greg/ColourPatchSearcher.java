@@ -19,7 +19,6 @@ public class ColourPatchSearcher {
             if (!pixelIsInsideExistingPatch(childPatches, areaPixel)) {
                 System.out.println("Colour does not match for, x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
                 ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage, childPatches);
-
                 childPatches.add(currentPatch);
             }
         }

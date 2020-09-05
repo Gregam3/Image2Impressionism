@@ -15,13 +15,13 @@ public enum PixelMoveType {
         UP.oppositeMove= DOWN;
         RIGHT.firstAttemptMove = UP;
         RIGHT.nextMove = DOWN;
-        RIGHT.nextMove = LEFT;
+        RIGHT.oppositeMove = LEFT;
         DOWN.firstAttemptMove = RIGHT;
         DOWN.nextMove = LEFT;
-        DOWN.nextMove = UP;
+        DOWN.oppositeMove = UP;
         LEFT.firstAttemptMove = DOWN;
         LEFT.nextMove = UP;
-        LEFT.nextMove = RIGHT;
+        LEFT.oppositeMove = RIGHT;
     }
 
     private final PixelMove move;

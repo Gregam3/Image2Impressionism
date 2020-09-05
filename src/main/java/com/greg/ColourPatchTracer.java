@@ -21,7 +21,6 @@ public class ColourPatchTracer {
         PixelMoveType moveType = PixelMoveType.RIGHT;
 
         while (path.size() <= 1 || !Pixel.haveSameLocation(path.get(0), pixel)) {
-
             if (pixel.getHexColour() != null) {
                 pixel.calculateHex(inputImage);
             }
@@ -35,10 +34,15 @@ public class ColourPatchTracer {
 
             System.out.println(Main.pixelsScanned++);
 
+            if(pixel.getX() == 465 && pixel.getY() == 218) {
+                System.out.println();
+            }
+
             Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage, path);
 
             if (nextPixel.isPresent()) {
                 pixel = nextPixel.get();
+                moveType = pixel.getCameFrom();
             } else {
                 return new ColourPatch(path);
             }
@@ -58,13 +62,9 @@ public class ColourPatchTracer {
         for (int moveIndex = 0; moveIndex < PixelMoveType.values().length; moveIndex++) {
             Pixel potentialNextPixel = moveType.movePixel(previousPixel);
 
-
             if (isJoinedPixel(previousPixel, potentialNextPixel, image) &&
                     !path.contains(potentialNextPixel) &&
                     !moveType.isBacktracking(previousPixel.getCameFrom())) {
-                if(moveType == PixelMoveType.UP) {
-                    System.out.println();
-                }
                 potentialNextPixel.setCameFrom(moveType);
                 return Optional.of(potentialNextPixel);
             } else {
