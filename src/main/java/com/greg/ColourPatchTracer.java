@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class ColourPatchTracer {
     private static final String BORDER_COLOUR = "00FF00";
-    static final int BORDER_COLOUR_RGB = new Color(0, 0, 0).getRGB();
+    static final int BORDER_COLOUR_RGB = new Color(255, 0, 0).getRGB();
 
     /**
      * Finds the outline of a colour patch and traces the outline in BORDER_COLOUR
@@ -28,15 +28,8 @@ public class ColourPatchTracer {
             path.add(pixel);
 
             outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
-            if(ColourPatchSearcher.pixelIsInsideExistingPatch(existingPatches, pixel)) {
-                return new ColourPatch(path);
-            }
 
             System.out.println(Main.pixelsScanned++);
-
-            if(pixel.getX() == 465 && pixel.getY() == 218) {
-                System.out.println();
-            }
 
             Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage, path);
 
@@ -63,7 +56,6 @@ public class ColourPatchTracer {
             Pixel potentialNextPixel = moveType.movePixel(previousPixel);
 
             if (isJoinedPixel(previousPixel, potentialNextPixel, image) &&
-                    !path.contains(potentialNextPixel) &&
                     !moveType.isBacktracking(previousPixel.getCameFrom())) {
                 potentialNextPixel.setCameFrom(moveType);
                 return Optional.of(potentialNextPixel);

@@ -30,6 +30,10 @@ public class CoordinateBound {
         this.min = min;
     }
 
+    /**
+     * @param value opposite value, to find x bound pass y
+     * @return
+     */
     public boolean isInBounds(int value) {
         return value >= min && value <= max;
     }

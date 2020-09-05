@@ -7,16 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 public class ColourPatch {
-    private Map<Integer, CoordinateBound> yBounds = new HashMap<>();
-    private Map<Integer, CoordinateBound> xBounds = new HashMap<>();
+    //          x        y bounds
+    private Map<Integer, CoordinateBound> yBoundsForX = new HashMap<>();
+    //          y        x bounds
+    private Map<Integer, CoordinateBound> xBoundForY = new HashMap<>();
     private final List<Pixel> outline;
     private String hexColour;
     private List<ColourPatch> childPatches = new ArrayList<>();
 
     public ColourPatch(List<Pixel> path) {
         for (Pixel borderPixel : path) {
-            updateBounds(borderPixel.getX(), borderPixel.getY(), yBounds);
-            updateBounds(borderPixel.getY(), borderPixel.getX(), xBounds);
+            updateBounds(borderPixel.getY(), borderPixel.getX(), xBoundForY);
+            updateBounds(borderPixel.getX(), borderPixel.getY(), yBoundsForX);
         }
         this.outline = path;
 
@@ -31,31 +33,31 @@ public class ColourPatch {
         if (bound == null) {
             bounds.put(keyCoordinate, new CoordinateBound(valueCoordinate));
         } else {
-            if (bound.getMax() < valueCoordinate) {
+            if (valueCoordinate > bound.getMax()) {
                 bound.setMax(valueCoordinate);
             }
 
-            if (bound.getMin() > valueCoordinate) {
+            if (valueCoordinate < bound.getMin()) {
                 bound.setMin(valueCoordinate);
             }
         }
     }
 
     public boolean isInside(Pixel pixel) {
-        CoordinateBound yCoordBound = yBounds.get(pixel.getY());
-        CoordinateBound xCoordBound = xBounds.get(pixel.getX());
+        CoordinateBound yCoordBound = yBoundsForX.get(pixel.getX());
+        CoordinateBound xCoordBound = xBoundForY.get(pixel.getY());
 
         if (xCoordBound == null || yCoordBound == null) {
             return false;
         }
 
-        return yCoordBound.isInBounds(pixel.getY()) && xCoordBound.isInBounds(pixel.getX());
+        return xCoordBound.isInBounds(pixel.getX()) && yCoordBound.isInBounds(pixel.getY());
     }
 
     public List<Pixel> generatePatchAreaPixels(BufferedImage image) {
         List<Pixel> areaPixels = new ArrayList<>();
 
-        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : yBounds.entrySet()) {
+        for (Map.Entry<Integer, CoordinateBound> boundaryEntry : yBoundsForX.entrySet()) {
             CoordinateBound coordBound = boundaryEntry.getValue();
 
             for (int y = coordBound.getMin(); y <= coordBound.getMax(); y++) {

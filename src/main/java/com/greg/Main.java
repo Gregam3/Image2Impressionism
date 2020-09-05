@@ -6,8 +6,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class Main {
     static int pixelsScanned = 0;
@@ -15,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             AtomicReference<byte[]> outputBytes = new AtomicReference<>();
-            final File inputFile = new File("src/main/resources/palau_flag.png");
+            final File inputFile = new File("src/main/resources/shitty_flag.png");
             BufferedImage outputImage = ImageIO.read(inputFile);
 
             //PORT 4567
@@ -30,13 +32,21 @@ public class Main {
 
             ColourPatch colourPatch = ImageUtil.convert(inputImage, outputImage);
 
-            List<ColourPatch> childPatches;
 
-            do {
-                childPatches = ColourPatchSearcher.search(colourPatch, outputImage, inputImage);
+            colourPatch.setChildPatches(ColourPatchSearcher.search(colourPatch, outputImage, inputImage));
+            List<ColourPatch> childPatches = colourPatch.getChildPatches();
 
-                colourPatch.setChildPatches(childPatches);
-            } while (!childPatches.isEmpty());
+            while(!childPatches.isEmpty()) {
+                for (ColourPatch childPatch : childPatches) {
+                    childPatch.setChildPatches(ColourPatchSearcher.search(childPatch, outputImage, inputImage));
+                }
+
+                childPatches = childPatches.stream()
+                        .flatMap(patch -> patch.getChildPatches().stream())
+                        .collect(Collectors.toList());
+            }
+
+            System.out.println("Done");
         } catch (Exception e) {
             e.printStackTrace();
         }

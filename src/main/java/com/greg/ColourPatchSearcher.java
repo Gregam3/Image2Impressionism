@@ -20,6 +20,8 @@ public class ColourPatchSearcher {
                 System.out.println("Colour does not match for, x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
                 ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage, childPatches);
                 childPatches.add(currentPatch);
+            } else {
+                System.out.println("Skipping area pixel x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
             }
         }
 
