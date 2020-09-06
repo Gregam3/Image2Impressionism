@@ -53,7 +53,7 @@ public class Pixel {
     }
 
     public void calculateHex(BufferedImage image) {
-        if(ColourPatchTracer.isInBounds(this, image.getData().getBounds())) {
+        if(ColourPatchTracer.isInBounds(this, image)) {
             this.hexColour = Integer.toHexString(image.getRGB(x, y));
         } else {
             throw new AssertionError("Pixel out of bounds " + this);

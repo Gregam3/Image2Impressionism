@@ -40,16 +40,7 @@ class ColourPatchTest {
         assert outsidePath.stream().noneMatch(colourPatch::isInside);
     }
 
-    private final BufferedImage UKRAINE_FLAG_IMAGE = getImageFromFile("src/main/resources/ukraine_flag.png");
-
-    private BufferedImage getImageFromFile(String path) {
-        try {
-            return ImageIO.read(new File(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    private final BufferedImage UKRAINE_FLAG_IMAGE = ImageBoundaryDrawer.getImageFromFile("src/test/resources/ukraine_flag.png");
 
     @Test
     public void testColourPatchTracing() {
@@ -76,14 +67,5 @@ class ColourPatchTest {
 
         Rectangle bounds = UKRAINE_FLAG_IMAGE.getData().getBounds();
         Assertions.assertEquals(bounds.getWidth() * bounds.getHeight(), areaPixels.size());
-    }
-
-    private final BufferedImage PALAU_FLAG_IMAGE = getImageFromFile("src/main/resources/palau_flag.png");
-
-    @Test
-    public void testOutlineCircle() {
-        ColourPatch colourPatch = ImageUtil.convert(PALAU_FLAG_IMAGE, PALAU_FLAG_IMAGE);
-
-        ColourPatchSearcher.search(colourPatch, PALAU_FLAG_IMAGE, PALAU_FLAG_IMAGE);
     }
 }

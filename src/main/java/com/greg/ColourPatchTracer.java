@@ -27,17 +27,17 @@ public class ColourPatchTracer {
                 pixel.calculateHex(inputImage);
             }
 
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
             path.add(pixel);
 
             outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
 
-            System.out.println(Main.pixelsScanned++);
+            System.out.println(ImageBoundaryDrawer.pixelsScanned++);
 
             Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage, parentPatch);
 
@@ -57,34 +57,33 @@ public class ColourPatchTracer {
 
         for (int moveIndex = 0; moveIndex < PixelMoveType.values().length; moveIndex++) {
             Pixel potentialNextPixel = moveType.movePixel(previousPixel);
-            potentialNextPixel.calculateHex(image);
+            if (isInBounds(potentialNextPixel, image)) {
+                potentialNextPixel.calculateHex(image);
 
-            if (shouldMoveTo(moveType, image, parentPatch, previousPixel, potentialNextPixel)) {
-                potentialNextPixel.setCameFrom(moveType);
-                return Optional.of(potentialNextPixel);
-            } else {
-                moveType = moveType.getNextMoveType();
+                if (shouldMoveTo(moveType, previousPixel, potentialNextPixel)) {
+                    potentialNextPixel.setCameFrom(moveType);
+                    return Optional.of(potentialNextPixel);
+                }
+
             }
+            moveType = moveType.getNextMoveType();
         }
 
         return Optional.empty();
     }
 
-    private static boolean shouldMoveTo(PixelMoveType moveType, BufferedImage image, ColourPatch parentPatch, Pixel previousPixel, Pixel potentialNextPixel) {
-        return isJoinedPixel(previousPixel, potentialNextPixel, image) &&
+    private static boolean shouldMoveTo(PixelMoveType moveType, Pixel previousPixel, Pixel potentialNextPixel) {
+        return isJoinedPixel(previousPixel, potentialNextPixel) &&
                 !moveType.isBacktracking(previousPixel.getCameFrom());
     }
 
-    private static boolean isJoinedPixel(Pixel previousPixel, Pixel nextPixel, BufferedImage image) {
-        Rectangle bounds = image.getData().getBounds();
-
-        return  isInBounds(nextPixel, bounds) &&
-                previousPixel.getHexColour().equals(nextPixel.getHexColour());
+    private static boolean isJoinedPixel(Pixel previousPixel, Pixel nextPixel) {
+        return previousPixel.getHexColour().equals(nextPixel.getHexColour());
     }
 
-    public static boolean isInBounds(Pixel pixel, Rectangle bounds) {
-        return pixel.getX() < bounds.getWidth() && pixel.getX() >= 0 &&
-                pixel.getY() < bounds.getHeight() && pixel.getY() >= 0;
+    public static boolean isInBounds(Pixel pixel, BufferedImage image) {
+        return pixel.getX() < image.getWidth() && pixel.getX() >= 0 &&
+                pixel.getY() < image.getHeight() && pixel.getY() >= 0;
     }
 
     public static int toRgbInt(String hex) {
