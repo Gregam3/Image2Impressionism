@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,12 +53,13 @@ class ColourPatchTest {
 
     @Test
     public void testColourPatchTracing() {
+        ColourPatch parentPatch = ImageUtil.convert(UKRAINE_FLAG_IMAGE, UKRAINE_FLAG_IMAGE);
+
         ColourPatch colourPatch = ColourPatchTracer.trace(
                 new Pixel(1, 1, UKRAINE_FLAG_IMAGE),
                 UKRAINE_FLAG_IMAGE,
                 UKRAINE_FLAG_IMAGE,
-                new ArrayList<>()
-        );
+                parentPatch);
 
         assert colourPatch.isInside(new Pixel(899, 299));
         assert colourPatch.isInside(new Pixel(1, 1));

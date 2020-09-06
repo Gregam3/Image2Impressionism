@@ -7,16 +7,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class ColourPatchTracer {
-    private static final String BORDER_COLOUR = "00FF00";
     static final int BORDER_COLOUR_RGB = new Color(255, 0, 0).getRGB();
+    static final String BORDER_COLOUR_HEX = Integer.toHexString(BORDER_COLOUR_RGB);
 
     /**
      * Finds the outline of a colour patch and traces the outline in BORDER_COLOUR
-     * @param pixel The first pixel
-     * @param inputImage The original image
+     *
+     * @param pixel       The first pixel
+     * @param inputImage  The original image
      * @param outputImage The image to add an outline to
+     * @param parentPatch
      */
-    public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage, List<ColourPatch> existingPatches) {
+    public static ColourPatch trace(Pixel pixel, BufferedImage inputImage, BufferedImage outputImage, ColourPatch parentPatch) {
         List<Pixel> path = new ArrayList<>();
         PixelMoveType moveType = PixelMoveType.RIGHT;
 
@@ -25,13 +27,19 @@ public class ColourPatchTracer {
                 pixel.calculateHex(inputImage);
             }
 
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             path.add(pixel);
 
             outputImage.setRGB(pixel.getX(), pixel.getY(), BORDER_COLOUR_RGB);
 
             System.out.println(Main.pixelsScanned++);
 
-            Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage, path);
+            Optional<Pixel> nextPixel = getNextPixel(moveType, pixel, inputImage, parentPatch);
 
             if (nextPixel.isPresent()) {
                 pixel = nextPixel.get();
@@ -44,19 +52,14 @@ public class ColourPatchTracer {
         return new ColourPatch(path);
     }
 
-    private static Optional<Pixel> getNextPixel(PixelMoveType moveType, Pixel previousPixel, BufferedImage image, List<Pixel> path) {
+    private static Optional<Pixel> getNextPixel(PixelMoveType moveType, Pixel previousPixel, BufferedImage image, ColourPatch parentPatch) {
         moveType = moveType.getFirstAttemptMove();
-//        try {
-//            Thread.sleep(10);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
         for (int moveIndex = 0; moveIndex < PixelMoveType.values().length; moveIndex++) {
             Pixel potentialNextPixel = moveType.movePixel(previousPixel);
+            potentialNextPixel.calculateHex(image);
 
-            if (isJoinedPixel(previousPixel, potentialNextPixel, image) &&
-                    !moveType.isBacktracking(previousPixel.getCameFrom())) {
+            if (shouldMoveTo(moveType, image, parentPatch, previousPixel, potentialNextPixel)) {
                 potentialNextPixel.setCameFrom(moveType);
                 return Optional.of(potentialNextPixel);
             } else {
@@ -67,20 +70,21 @@ public class ColourPatchTracer {
         return Optional.empty();
     }
 
-    private static boolean isJoinedPixel(Pixel lastPixel, Pixel nextPixel, BufferedImage image) {
-        Rectangle bounds = image.getData().getBounds();
-        boolean isInBounds = isInBounds(nextPixel.getX(), bounds.getWidth()) && isInBounds(nextPixel.getY(), bounds.getHeight());
-
-        if (isInBounds) {
-            nextPixel.calculateHex(image);
-            return lastPixel.getHexColour().equals(nextPixel.getHexColour());
-        } else {
-            return false;
-        }
+    private static boolean shouldMoveTo(PixelMoveType moveType, BufferedImage image, ColourPatch parentPatch, Pixel previousPixel, Pixel potentialNextPixel) {
+        return isJoinedPixel(previousPixel, potentialNextPixel, image) &&
+                !moveType.isBacktracking(previousPixel.getCameFrom());
     }
 
-    private static boolean isInBounds(int num, double max) {
-        return num > 0 && num < max;
+    private static boolean isJoinedPixel(Pixel previousPixel, Pixel nextPixel, BufferedImage image) {
+        Rectangle bounds = image.getData().getBounds();
+
+        return  isInBounds(nextPixel, bounds) &&
+                previousPixel.getHexColour().equals(nextPixel.getHexColour());
+    }
+
+    public static boolean isInBounds(Pixel pixel, Rectangle bounds) {
+        return pixel.getX() < bounds.getWidth() && pixel.getX() >= 0 &&
+                pixel.getY() < bounds.getHeight() && pixel.getY() >= 0;
     }
 
     public static int toRgbInt(String hex) {
@@ -90,7 +94,7 @@ public class ColourPatchTracer {
     public static <T> T getNthLastItemFromList(List<T> list, int n) {
         int listN = n + 1;
 
-        if(list.size() < listN) return null;
+        if (list.size() < listN) return null;
 
         return list.get(list.size() - listN);
     }

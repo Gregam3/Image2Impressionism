@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ColourPatch {
-    //          x        y bounds
-    private Map<Integer, CoordinateBound> yBoundsForX = new HashMap<>();
-    //          y        x bounds
-    private Map<Integer, CoordinateBound> xBoundForY = new HashMap<>();
+    //                x        y bounds
+    private final Map<Integer, CoordinateBound> yBoundsForX = new HashMap<>();
+    //                y        x bounds
+    private final Map<Integer, CoordinateBound> xBoundsForY = new HashMap<>();
     private final List<Pixel> outline;
     private String hexColour;
     private List<ColourPatch> childPatches = new ArrayList<>();
 
     public ColourPatch(List<Pixel> path) {
         for (Pixel borderPixel : path) {
-            updateBounds(borderPixel.getY(), borderPixel.getX(), xBoundForY);
+            updateBounds(borderPixel.getY(), borderPixel.getX(), xBoundsForY);
             updateBounds(borderPixel.getX(), borderPixel.getY(), yBoundsForX);
         }
         this.outline = path;
@@ -45,7 +45,7 @@ public class ColourPatch {
 
     public boolean isInside(Pixel pixel) {
         CoordinateBound yCoordBound = yBoundsForX.get(pixel.getX());
-        CoordinateBound xCoordBound = xBoundForY.get(pixel.getY());
+        CoordinateBound xCoordBound = xBoundsForY.get(pixel.getY());
 
         if (xCoordBound == null || yCoordBound == null) {
             return false;

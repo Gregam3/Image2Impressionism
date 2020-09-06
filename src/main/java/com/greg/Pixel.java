@@ -20,7 +20,7 @@ public class Pixel {
     }
 
     public static boolean haveSameLocation(Pixel thisPixel, Pixel thatPixel) {
-        if(thisPixel == null || thatPixel == null) return false;
+        if (thisPixel == null || thatPixel == null) return false;
 
         return thisPixel.getX() == thatPixel.getX() && thisPixel.getY() == thatPixel.getY();
     }
@@ -53,7 +53,11 @@ public class Pixel {
     }
 
     public void calculateHex(BufferedImage image) {
-        this.hexColour = Integer.toHexString(image.getRGB(x, y));
+        if(ColourPatchTracer.isInBounds(this, image.getData().getBounds())) {
+            this.hexColour = Integer.toHexString(image.getRGB(x, y));
+        } else {
+            throw new AssertionError("Pixel out of bounds " + this);
+        }
     }
 
     @Override
