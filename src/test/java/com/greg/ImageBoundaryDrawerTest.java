@@ -36,8 +36,8 @@ class ImageBoundaryDrawerTest {
 
     @Test
     public void testIfSingleLevelDepthFlagsAreTracedAsExpected() {
-        assertImagesMatch("ukraine_flag", "ukraine_flag_finished");
         assertImagesMatch("shitty_palau_flag", "shitty_palau_flag_finished");
+        assertImagesMatch("ukraine_flag", "ukraine_flag_finished");
         assertImagesMatch("shitty_comoros_flag", "shitty_comoros_flag_finished");
         assertImagesMatch("shitty_finnish_flag", "shitty_finnish_flag_finished");
     }

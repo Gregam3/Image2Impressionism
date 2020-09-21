@@ -14,14 +14,12 @@ import java.util.stream.Collectors;
 
 public class ImageBoundaryDrawer {
     private static final AtomicReference<byte[]> outputBytes = new AtomicReference<>();
-    private static final File inputFile = new File("src/main/resources/three_levels_deep_image.png");
+    private static final File inputFile = new File("src/main/resources/shitty_scenary.png");
     private static BufferedImage outputImage;
 
     static int pixelsScanned = 0;
 
     public static void main(String[] args) {
-        drawImageBoundaries(inputFile);
-
         //PORT 4567
         Spark.get("/generate", (req, res) -> {
             outputBytes.set(ImageUtil.getBytesFromImage(outputImage));
@@ -29,6 +27,8 @@ public class ImageBoundaryDrawer {
             res.header("Content-Type", "image/png");
             return outputBytes.get();
         });
+
+        drawImageBoundaries(inputFile);
     }
 
     public static Optional<BufferedImage> drawImageBoundaries(File inputFile) {
@@ -44,7 +44,7 @@ public class ImageBoundaryDrawer {
             while(!childPatches.isEmpty()) {
                 for (ColourPatch childPatch : childPatches) {
                     //TODO fix hack to ignore new borders
-                    if(!childPatch.getHexColour().equals("ffffffff")) {
+                    if(childPatch.getRgb() != ColourPatchTracer.BORDER_COLOUR_RGB) {
                         childPatch.setChildPatches(ColourPatchSearcher.search(childPatch, outputImage, inputImage));
                     }
                 }

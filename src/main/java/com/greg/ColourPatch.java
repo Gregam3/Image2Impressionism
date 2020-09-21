@@ -12,7 +12,7 @@ public class ColourPatch {
     //                y        x bounds
     private final Map<Integer, CoordinateBound> xBoundsForY = new HashMap<>();
     private final List<Pixel> outline;
-    private String hexColour;
+    private int rgb;
     private List<ColourPatch> childPatches = new ArrayList<>();
 
     public ColourPatch(List<Pixel> path) {
@@ -23,7 +23,7 @@ public class ColourPatch {
         this.outline = path;
 
         if (!path.isEmpty()) {
-            this.hexColour = path.get(0).getHexColour();
+            this.rgb = path.get(0).getRgb();
         }
     }
 
@@ -82,11 +82,11 @@ public class ColourPatch {
         this.childPatches = childPatches;
     }
 
-    public String getHexColour() {
-        return hexColour;
+    public int getRgb() {
+        return rgb;
     }
 
-    public void setHexColour(String hexColour) {
-        this.hexColour = hexColour;
+    public void setRgb(int rgb) {
+        this.rgb = rgb;
     }
 }
