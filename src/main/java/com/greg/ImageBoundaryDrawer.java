@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ImageBoundaryDrawer {
     private static final AtomicReference<byte[]> outputBytes = new AtomicReference<>();
-    private static final File inputFile = new File("src/main/resources/shitty_comoros_flag.png");
+    private static final File inputFile = new File("src/main/resources/three_levels_deep_image.png");
     private static BufferedImage outputImage;
 
     static int pixelsScanned = 0;
@@ -41,18 +41,18 @@ public class ImageBoundaryDrawer {
             colourPatch.setChildPatches(ColourPatchSearcher.search(colourPatch, outputImage, inputImage));
             List<ColourPatch> childPatches = colourPatch.getChildPatches();
 
-//            while(!childPatches.isEmpty()) {
-//                for (ColourPatch childPatch : childPatches) {
-//                    //TODO fix hack to ignore new borders
-//                    if(!childPatch.getHexColour().equals("ffffffff")) {
-//                        childPatch.setChildPatches(ColourPatchSearcher.search(childPatch, outputImage, inputImage));
-//                    }
-//                }
-//
-//                childPatches = childPatches.stream()
-//                        .flatMap(patch -> patch.getChildPatches().stream())
-//                        .collect(Collectors.toList());
-//            }
+            while(!childPatches.isEmpty()) {
+                for (ColourPatch childPatch : childPatches) {
+                    //TODO fix hack to ignore new borders
+                    if(!childPatch.getHexColour().equals("ffffffff")) {
+                        childPatch.setChildPatches(ColourPatchSearcher.search(childPatch, outputImage, inputImage));
+                    }
+                }
+
+                childPatches = childPatches.stream()
+                        .flatMap(patch -> patch.getChildPatches().stream())
+                        .collect(Collectors.toList());
+            }
 
             System.out.println("Done");
             return Optional.of(outputImage);
