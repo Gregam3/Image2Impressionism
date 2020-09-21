@@ -44,7 +44,7 @@ public class ImageBoundaryDrawer {
             while(!childPatches.isEmpty()) {
                 for (ColourPatch childPatch : childPatches) {
                     //TODO fix hack to ignore new borders
-                    if(childPatch.getRgb() != ColourPatchTracer.BORDER_COLOUR_RGB) {
+                    if(!childPatch.getHex().equals(ColourPatchTracer.BORDER_COLOUR_HEX)) {
                         childPatch.setChildPatches(ColourPatchSearcher.search(childPatch, outputImage, inputImage));
                     }
                 }

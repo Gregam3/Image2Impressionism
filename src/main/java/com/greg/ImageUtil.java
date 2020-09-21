@@ -37,4 +37,15 @@ public class ImageUtil {
 
         return new ColourPatch(path);
     }
+
+    public static String toHex(int rgb) {
+        String hex = Integer.toHexString(rgb & 0xffffff);
+        if (hex.length() < 6) {
+            if (hex.length() == 5) hex = "0" + hex;
+            else if (hex.length() == 4) hex = "00" + hex;
+            else if (hex.length() == 3) hex = "000" + hex;
+        }
+        hex = "#" + hex;
+        return hex;
+    }
 }

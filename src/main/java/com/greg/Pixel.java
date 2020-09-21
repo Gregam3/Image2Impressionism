@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class Pixel {
     private final int x;
     private final int y;
-    private Integer rgb;
+    private String hex;
     private PixelMoveType cameFrom;
 
     public Pixel(int x, int y) {
@@ -33,8 +33,8 @@ public class Pixel {
         return y;
     }
 
-    public Integer getRgb() {
-        return rgb;
+    public String getHex() {
+        return hex;
     }
 
     public PixelMoveType getCameFrom() {
@@ -49,12 +49,12 @@ public class Pixel {
     public String toString() {
         return "x=" + x +
                 " y=" + y +
-                " hexColour='" + rgb + '\'';
+                " hexColour='" + hex + '\'';
     }
 
     public void calculateHex(BufferedImage image) {
         if(ColourPatchTracer.isInBounds(this, image)) {
-            this.rgb = image.getRGB(x, y);
+            this.hex = ImageUtil.toHex(image.getRGB(x, y));
         } else {
             throw new AssertionError("Pixel out of bounds " + this);
         }

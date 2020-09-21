@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 public class ColourPatchSearcher {
     public static List<ColourPatch> search(ColourPatch parentPatch, BufferedImage outputImage, BufferedImage inputImage) {
         List<Pixel> innerPatchPixels = parentPatch.generatePatchAreaPixels(inputImage)
-                .stream().filter(areaPixel -> areaPixel.getRgb() != parentPatch.getRgb()
-                                && areaPixel.getRgb() != ColourPatchTracer.BORDER_COLOUR_RGB)
+                .stream().filter(areaPixel -> !areaPixel.getHex().equals(parentPatch.getHex())
+                                && !areaPixel.getHex().equals(ColourPatchTracer.BORDER_COLOUR_HEX))
                 .collect(Collectors.toList());
         List<ColourPatch> childPatches = new ArrayList<>();
 
