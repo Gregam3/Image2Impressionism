@@ -19,7 +19,7 @@ public class ColourPatchSearcher {
             //Check both that the pixel is not in another patch
             if (!pixelIsInsideExistingPatch(childPatches, areaPixel)) {
                 System.out.println("Colour does not match for, x=" + areaPixel.getX() + ", y=" + areaPixel.getY());
-                ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage, parentPatch);
+                ColourPatch currentPatch = ColourPatchTracer.trace(areaPixel, inputImage, outputImage);
                 childPatches.add(currentPatch);
             } else {
                 System.out.println("Skipping area pixel x=" + areaPixel.getX() + ", y=" + areaPixel.getY());

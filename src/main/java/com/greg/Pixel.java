@@ -7,6 +7,7 @@ public class Pixel {
     private final int y;
     private String hex;
     private PixelMoveType cameFrom;
+    private boolean isDeadEnd;
 
     public Pixel(int x, int y) {
         this.x = x;
@@ -43,6 +44,14 @@ public class Pixel {
 
     public void setCameFrom(PixelMoveType moveType) {
         this.cameFrom = moveType;
+    }
+
+    public boolean isDeadEnd() {
+        return isDeadEnd;
+    }
+
+    public void setDeadEnd(boolean deadEnd) {
+        isDeadEnd = deadEnd;
     }
 
     @Override

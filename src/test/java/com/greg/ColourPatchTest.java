@@ -46,8 +46,8 @@ class ColourPatchTest {
         ColourPatch colourPatch = ColourPatchTracer.trace(
                 new Pixel(1, 1, UKRAINE_FLAG_IMAGE),
                 UKRAINE_FLAG_IMAGE,
-                UKRAINE_FLAG_IMAGE,
-                parentPatch);
+                UKRAINE_FLAG_IMAGE
+        );
 
         assert colourPatch.isInside(new Pixel(899, 299));
         assert colourPatch.isInside(new Pixel(1, 1));
