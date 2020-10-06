@@ -22,7 +22,6 @@ public class ColourPatchTracer {
      * @param outputImage The image to add an outline to
      */
     public static ColourPatch trace(Pixel pixel, List<Pixel> path, BufferedImage inputImage, BufferedImage outputImage) {
-        path = new ArrayList<>();
         PixelMoveType moveType = PixelMoveType.RIGHT;
 
         while (path.size() <= 1 || !Pixel.haveSameLocation(path.get(0), pixel)) {
@@ -30,11 +29,11 @@ public class ColourPatchTracer {
                 pixel.calculateHex(inputImage);
             }
 
-//            try {
-//                Thread.sleep(10);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             path.add(pixel);
 
@@ -94,7 +93,7 @@ public class ColourPatchTracer {
 
     private static boolean shouldMoveTo(PixelMoveType moveType, Pixel currentPixel, Pixel potentialNextPixel, List<Pixel> path) {
         return isJoinedPixel(currentPixel, potentialNextPixel) &&
-                !path.contains(potentialNextPixel) &&
+                (!path.contains(potentialNextPixel) || path.get(0).equals(potentialNextPixel)) &&
                 !moveType.isBacktracking(currentPixel.getCameFrom());
     }
 
@@ -118,9 +117,8 @@ public class ColourPatchTracer {
 
         for (int i = n; i >= 0; --i) {
             pixel = path.get(i);
-            Pixel currentPixel = path.get(path.size() - 1);
 
-            if(!pixel.isDeadEnd() && currentPixel.equals(pixel)) {
+            if(!pixel.isDeadEnd()) {
                 return pixel;
             }
         }
