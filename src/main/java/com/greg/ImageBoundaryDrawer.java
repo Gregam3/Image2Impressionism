@@ -43,11 +43,7 @@ public class ImageBoundaryDrawer {
 
             while(!childPatches.isEmpty()) {
                 for (ColourPatch childPatch : childPatches) {
-                    if(childPatches.size() == 11) {
-                        System.out.println();
-                    }
-
-                    //TODO fix hack to ignore new borders
+                    //Gets stuck on child patches 11
                     if(!childPatch.getHex().equals(ColourPatchTracer.BORDER_COLOUR_HEX)) {
                         childPatch.setChildPatches(ColourPatchSearcher.search(childPatch, outputImage, inputImage));
                     }

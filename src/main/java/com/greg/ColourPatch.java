@@ -60,7 +60,7 @@ public class ColourPatch {
         for (Map.Entry<Integer, CoordinateBound> boundaryEntry : yBoundsForX.entrySet()) {
             CoordinateBound coordBound = boundaryEntry.getValue();
 
-            for (int y = coordBound.getMin(); y <= coordBound.getMax(); y++) {
+            for (int y = coordBound.getMin() + 1; y <= coordBound.getMax() - 1; y++) {
                 Pixel pixel = new Pixel(boundaryEntry.getKey(), y, image);
                 System.out.println(pixel);
                 areaPixels.add(pixel);
